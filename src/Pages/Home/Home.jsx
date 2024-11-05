@@ -3,6 +3,7 @@ import Featured from "./Featured";
 import NewsLatter from "./NewsLatter";
 import Slider from "./Slider";
 import SpecialOffer from "./SpecialOffer";
+import Testimonials from "./Testimonials";
 
 const Home = () => {
     return (
@@ -11,6 +12,7 @@ const Home = () => {
             <Featured></Featured>
             <AboutSection></AboutSection>
             <SpecialOffer></SpecialOffer>
+            <Testimonials></Testimonials>
             <NewsLatter></NewsLatter>
         </div>
     );
