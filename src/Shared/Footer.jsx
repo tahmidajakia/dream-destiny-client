@@ -1,8 +1,8 @@
 const Footer = () => {
   return (
-    <footer className="footer mt-10 bg-base-200 text-base-content p-10 border border-t-8 border-primaryColor mt-14">
+    <footer className="footer  bg-base-200 text-base-content p-10 border border-t-8 border-primaryColor mt-14">
       <aside>
-        <h2 className="text-4xl font-bold">DreamyDestiny</h2>
+        <h2 className="text-2xl font-lobster sm:text-3xl font-semibold text-primaryColor dark:text-white">DreamyDestiny</h2>
         <p>
           ACME Industries Ltd.
           <br />

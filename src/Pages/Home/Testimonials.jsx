@@ -3,6 +3,7 @@ import { AuthContext } from "../../Provider/AuthProvider";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { FaQuoteLeft } from "react-icons/fa"; // Importing a quote icon
 
 const Testimonials = () => {
   const { user } = useContext(AuthContext);
@@ -40,31 +41,47 @@ const Testimonials = () => {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3000,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
   };
 
   return (
-    <div className="font-inter max-w-7xl mx-auto mt-14">
-      <h1 className="text-4xl mb-10 font-bold text-primaryColor dark:text-white my-6">
+    <div className="font-inter max-w-7xl mx-auto mt-28 px-4 sm:px-6 lg:px-8"> {/* Added padding for mobile */}
+      <h1 className="text-4xl text-center mb-10 font-bold text-primaryColor dark:text-white my-6">
         What People Say About Us
       </h1>
       <Slider {...settings}>
         {reviews.map((review, index) => (
-          <div key={index} className="p-4"> {/* Add padding here to create space between cards */}
+          <div key={index} className="p-4">
             <div
-              className="shadow-xl rounded-lg overflow-hidden transition-transform transform hover:-translate-y-2 duration-300 ease-in-out h-full"
-              style={{ height: "350px" }}
+              className="shadow-xl rounded-lg overflow-hidden transition-transform transform hover:-translate-y-2 duration-300 ease-in-out h-full mx-auto w-full max-w-xs" // Added mx-auto and max-w-xs
             >
+              {/* Decorative quotation mark icon */}
+              <FaQuoteLeft className="absolute top-5 left-5 text-4xl text-white opacity-70" />
+
               {/* Image section with dark blue background */}
-              <div className="bg-primaryColor flex justify-center py-10">
-                <img
-                  src={review.avatar || "https://via.placeholder.com/80"}
+              <div className="bg-primaryColor flex justify-center py-4 md:py-8">
+                <img 
+                  src={review.photo}
                   alt="User avatar"
-                  className="w-20 h-20 rounded-full object-cover border-4 border-white"
+                  className="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 rounded-full object-cover border-4 border-white"
                 />
               </div>
 
               {/* Name and review section with white background */}
-              <div className="bg-white p-8 text-center h-full">
+              <div className="bg-white p-4 md:p-8 text-center h-full">
                 <h3 className="text-lg font-semibold text-blue-900">
                   {review.name}
                 </h3>

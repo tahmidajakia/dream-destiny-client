@@ -31,7 +31,6 @@ const Review = ({ roomDetails }) => {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      console.log(data);
       setBooked(data);
     } catch (error) {
       console.error("Error fetching booking data:", error);
@@ -41,7 +40,6 @@ const Review = ({ roomDetails }) => {
   const hasBooked = booked.some(
     (book) => book.room_type === roomDetails.room_type
   );
-  console.log(hasBooked);
 
   const handleReview = async (e) => {
     e.preventDefault();
@@ -62,10 +60,6 @@ const Review = ({ roomDetails }) => {
       photo,
     };
 
-    // if (!hasBooked) {
-    //   return toast.error("You can only review rooms you have booked");
-    // }
-
     try {
       const response = await fetch("http://localhost:5000/reviews", {
         method: "POST",
@@ -79,19 +73,23 @@ const Review = ({ roomDetails }) => {
         throw new Error("Network response was not ok");
       }
 
-      const data = await response.json();
-      console.log(data);
       setShowModal(false);
     } catch (error) {
       console.error("Error posting review:", error);
     }
   };
 
+  const openReviewModal = () => {
+    if (!hasBooked) {
+      toast.error("You need to book a room to leave a review.");
+      return;
+    }
+    setShowModal(true);
+  };
+
   return (
-    <div className="mt-12">
-      {" "}
-      {/* Adjusted margin-top to mt-12 or removed */}
-      <div className="flex gap-8">
+    <div className="mt-12 px-4 sm:px-6">
+      <div className="flex flex-col lg:flex-row gap-8">
         <div>
           <h5 className="text-xl text-primaryColor">Rating & Reviews :</h5>
           <div className="flex items-center gap-4 my-4">
@@ -103,17 +101,17 @@ const Review = ({ roomDetails }) => {
               <MdOutlineStarPurple500 />
               <MdOutlineStarHalf />
             </p>
-            <p className="bg-yellow-300 text-white py-1 px-2">Awesome</p>
+            <p className="bg-yellow-300 text-white py-1 px-2 rounded-md">Awesome</p>
           </div>
         </div>
-        <div className="border-l-2 border-primaryColor pl-20">
+        <div className="border-l-2 border-primaryColor pl-4 lg:pl-20">
           {[5, 4, 3, 2, 1].map((rating) => (
-            <div key={rating} className="flex items-center gap-2">
-              <h4 className="text-xl font-medium text-primaryColor">
+            <div key={rating} className="flex items-center gap-2 mb-2">
+              <h4 className="text-lg lg:text-xl font-medium text-primaryColor">
                 {rating}.00
               </h4>
               <progress
-                className="progress progress-warning w-56"
+                className="progress progress-warning w-full lg:w-56"
                 value={rating * 20}
                 max="100"
               ></progress>
@@ -121,31 +119,33 @@ const Review = ({ roomDetails }) => {
           ))}
         </div>
       </div>
-      <div>
+      <div className="text-center">
         <button
-          onClick={() => setShowModal(true)}
-          className="text-xl py-3 px-4 shadow-xl text-primaryColor font-bold my-6"
+          onClick={openReviewModal}
+          className="text-lg lg:text-xl py-2 px-4 lg:py-3 lg:px-6 shadow-lg text-primaryColor font-bold my-6"
         >
           Write Your Review Here
         </button>
         <Modal
           show={showModal}
           onClose={() => setShowModal(false)}
-          className="p-8"
-          style={{ maxWidth: "400px", width: "90%", height: "auto" }}
+          className="p-4 lg:p-8 mx-2 sm:mx-auto"
+          style={{ maxWidth: "90%", width: "100%", maxWidth: "400px" }}
         >
-          <button
-            onClick={() => setShowModal(false)}
-            className="flex justify-end pr-6 text-3xl"
-          >
-            <MdOutlineCancel />
-          </button>
-          <h2 className="text-xl mt-8 font-medium text-center">
+          <div className="flex justify-end">
+            <button
+              onClick={() => setShowModal(false)}
+              className="text-2xl lg:text-3xl"
+            >
+              <MdOutlineCancel />
+            </button>
+          </div>
+          <h2 className="text-lg lg:text-xl mt-4 lg:mt-8 font-medium text-center">
             What You Feel About Us <br /> Write Here Freely
           </h2>
 
-          <form onSubmit={handleReview}>
-            <div className="rating mt-4 flex justify-center mx-auto">
+          <form onSubmit={handleReview} className="mt-4 lg:mt-6">
+            <div className="rating flex justify-center mx-auto gap-1 lg:gap-2">
               {[1, 2, 3, 4, 5].map((rating) => (
                 <input
                   key={rating}
@@ -156,13 +156,12 @@ const Review = ({ roomDetails }) => {
                 />
               ))}
             </div>
-            <div className="mt-5">
+            <div className="mt-4 lg:mt-5 w-3/4 mx-auto">
               <input
                 value={user?.displayName}
                 type="text"
                 name="name"
-                id="text"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 mx-auto p-2.5"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 placeholder="User name"
                 required
                 readOnly
@@ -172,10 +171,11 @@ const Review = ({ roomDetails }) => {
               className="textarea w-3/4 mx-auto mt-5"
               placeholder="Write something..."
               name="comment"
+              required
             />
             <button
               type="submit"
-              className="btn mt-8 flex justify-center  w-[230px] mb-8 mx-auto bg-primaryColor text-white"
+              className="btn ml-9 mb-3 mt-8 w-[180px] lg:w-[230px] mx-auto bg-primaryColor text-white"
             >
               Save
             </button>

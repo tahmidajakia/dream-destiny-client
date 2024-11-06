@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-
 import DatePicker from "react-datepicker";
 import BookNowModal from "./BookNowModal";
 import { AuthContext } from "../../Provider/AuthProvider";
@@ -32,7 +31,7 @@ const BookNow = ({ roomDetails }) => {
     const bookData = async () => {
         try {
             const response = await fetch('http://localhost:5000/bookings', {
-                method: 'GET', // Change this to GET to fetch booking data
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -46,9 +45,6 @@ const BookNow = ({ roomDetails }) => {
         }
     };
 
-    const isAvailable = Array.isArray(booked) && !booked.some(book => book.room_type === room_type);
-    console.log(isAvailable);
-
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -61,18 +57,20 @@ const BookNow = ({ roomDetails }) => {
             return;
         }
     
-        // Check if the user has already booked any hotel
-        if (user.alreadyBooked) {
-            toast.error('You have already booked a hotel. You cannot book another one.');
+        // Check if the hotel has already been booked by any user
+        const alreadyBookedByAnyUser = booked.some(book => book.room_type === room_type);
+    
+        if (alreadyBookedByAnyUser) {
+            toast.error('This hotel has already been booked by another user.');
             return; // Stop further execution if already booked to prevent modal from opening
         }
     
-        // Check if the hotel has already been booked by any user
-        const alreadyBooked = booked.some(book => book.room_type === room_type);
+        // Check if the hotel has already been booked by the current user
+        const alreadyBookedByCurrentUser = booked.some(book => book.room_type === room_type && book.email === user.email);
     
-        if (alreadyBooked) {
-            toast.error('This hotel is already booked. It cannot be booked twice.');
-            return; // Stop further execution if already booked to prevent modal from opening
+        if (alreadyBookedByCurrentUser) {
+            toast.error('You have already booked this hotel. It cannot be booked twice by the same user.');
+            return; // Stop further execution if already booked by the same user
         }
     
         // Proceed with the booking if not already booked
@@ -115,28 +113,26 @@ const BookNow = ({ roomDetails }) => {
             name
         });
     
-        // Set the user's alreadyBooked status to true after successful booking
-        user.alreadyBooked = true; // Update the user object
-    
         handleOpen();
     };
+    
 
     const handleIncreaseCount = () => {
-        setMassageCount(massageCount + 1)
-    }
+        setMassageCount(massageCount + 1);
+    };
     const handleDecreaseCount = () => {
         if (massageCount > 0) {
-            setMassageCount(massageCount - 1)
+            setMassageCount(massageCount - 1);
         }
-    }
+    };
     const handleIncreaseCount2 = () => {
-        setSpaCount(spaCount + 1)
-    }
+        setSpaCount(spaCount + 1);
+    };
     const handleDecreaseCount2 = () => {
-        if (massageCount > 0) {
-            setSpaCount(spaCount - 1)
+        if (spaCount > 0) {
+            setSpaCount(spaCount - 1);
         }
-    }
+    };
     console.log(bookingData);
 
     return (
@@ -166,7 +162,7 @@ const BookNow = ({ roomDetails }) => {
                         className="border-2 p-2 mt-4 md:mt-0 rounded-md"
                         selected={startDate2}
                         onChange={(date) => setStartDate2(date)}
-                        minDate={startDate} // Prevent selecting a check-out date before check-in
+                        minDate={startDate}
                     />
                 </div>
 
@@ -177,9 +173,7 @@ const BookNow = ({ roomDetails }) => {
                         defaultValue={0}
                         required
                     >
-                        <option value={0} disabled>
-                            Select Adult
-                        </option>
+                        <option value={0} disabled>Select Adult</option>
                         <option value={1}>Adult 1</option>
                         <option value={2}>Adult 2</option>
                         <option value={3}>Adult 3</option>
@@ -191,9 +185,7 @@ const BookNow = ({ roomDetails }) => {
                         defaultValue={0}
                         required
                     >
-                        <option value={0} disabled>
-                            Select Child
-                        </option>
+                        <option value={0} disabled>Select Child</option>
                         <option value={1}>Child 1</option>
                         <option value={2}>Child 2</option>
                         <option value={3}>Child 3</option>
@@ -201,15 +193,13 @@ const BookNow = ({ roomDetails }) => {
                     </select>
                 </div>
                 <div className="mt-10">
-                    <h2 className="mt-3 text-2xl font-inter font-semibold">
-                        Extra Services
-                    </h2>
+                    <h2 className="mt-3 text-2xl font-inter font-semibold">Extra Services</h2>
                     <div className="flex mt-4 items-center justify-between">
                         <div className="flex items-center gap-2">
                             <input type="checkbox" name="roomClean" id="roomClean" />
                             <h5>Room Clean</h5>
                         </div>
-                        <h5>${roomCleanPrice}/night </h5>
+                        <h5>${roomCleanPrice}/night</h5>
                     </div>
                     <div className="flex mt-6 items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -264,17 +254,9 @@ const BookNow = ({ roomDetails }) => {
                         </div>
                     </div>
                 </div>
-
-                <div className="flex justify-between mt-4 border-t border-b py-4">
-                    <h2 className="text-2xl font-inter font-semibold">Total:</h2>
-                    <h2 className="text-2xl font-inter font-semibold">
-                        ${bookingData.totalPrice || 0}
-                    </h2>
-                </div>
                 <button
-                    onClick={handleOpen}
                     type="submit"
-                    className="w-full bg-primaryColor text-white font-inter py-3 rounded-lg hover:bg-opacity-90 mt-4"
+                    className="mt-8 w-full bg-primaryColor text-white py-3 px-10 rounded-lg text-lg"
                 >
                     Book Now
                 </button>

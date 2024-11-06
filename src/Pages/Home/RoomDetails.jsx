@@ -9,35 +9,30 @@ import DisplayComment from "./DisplayComment";
 
 const RoomDetails = () => {
   const roomDetails = useLoaderData();
-
-  console.log(roomDetails);
   const { room_image, room_type, description, availability, room_size } =
     roomDetails || {};
 
   return (
     <div>
       <div
-        className="bg-no-repeat bg-center bg-cover p-72"
-        style={{ backgroundImage: `url(${roomDetails.room_image})` }}
+        className="bg-no-repeat bg-center bg-cover p-24 md:p-48 lg:p-72"
+        style={{ backgroundImage: `url(${room_image})` }}
       ></div>
 
-      <div className="mt-16 max-w-7xl mx-auto lg:flex justify-between gap-6">
+      <div className="mt-10 lg:mt-16 max-w-7xl mx-auto flex flex-col lg:flex-row justify-between gap-6 px-4 sm:px-6">
         <div className="flex-1">
-          <h2 className="text-primaryColor text-3xl font-bold">
-            {roomDetails.room_type}
-          </h2>
-          <p className="my-4">{roomDetails.room_size}/Enjoy Food With Family</p>
-          <p className="mb-8">Status: {roomDetails.availability}</p>
+          <h2 className="text-primaryColor text-3xl font-bold">{room_type}</h2>
+          <p className="my-2 lg:my-4">{room_size}/Enjoy Food With Family</p>
+          <p className="mb-4 lg:mb-8">Status: {availability}</p>
           <Divider />
-          <h2 className="text-primaryColor text-xl mt-6 font-medium">
-            Overview
-          </h2>
-          <p className="mt-4 w-11/12">{roomDetails.description}</p>
+          
+          <h2 className="text-primaryColor text-xl mt-4 lg:mt-6 font-medium">Overview</h2>
+          <p className="mt-2 lg:mt-4 w-full lg:w-11/12">{description}</p>
 
-          <h2 className="text-primaryColor text-xl mt-6 font-medium">
+          <h2 className="text-primaryColor text-xl mt-4 lg:mt-6 font-medium">
             Family-Friendly Amenities
           </h2>
-          <div className="flex gap-6 my-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-4 lg:gap-6 my-4 lg:my-6">
             <div className="bg-gray-100 rounded-lg border">
               <p className="flex items-center gap-4 py-4 px-6">
                 <img className="w-10 h-10" src={swim} alt="Kids Swimming Pool" />
@@ -58,13 +53,13 @@ const RoomDetails = () => {
             </div>
           </div>
 
-          <div className="max-w-7xl mt-36">
+          <div className="mt-16 lg:mt-36">
             <Review roomDetails={roomDetails}></Review>
             <DisplayComment roomDetails={roomDetails}></DisplayComment>
           </div>
         </div>
 
-        <div className="bg-white shadow-xl rounded-lg p-4 max-w-4xl">
+        <div className="bg-white shadow-xl rounded-lg p-4 lg:p-6 mt-8 lg:mt-0 max-w-full lg:max-w-4xl">
           <BookNow roomDetails={roomDetails}></BookNow>
         </div>
       </div>

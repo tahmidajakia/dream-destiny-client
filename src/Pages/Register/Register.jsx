@@ -3,13 +3,16 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Provider/AuthProvider";
 import Swal from "sweetalert2";
+import { FaGoogle } from "react-icons/fa";
 
 const Register = () => {
-    const navigate = useNavigate()
-  const { createUser } = useContext(AuthContext);
+  const {googleSignIn} = useContext(AuthContext)
+  const navigate = useNavigate();
+  const { createUser, updateUserProfile } = useContext(AuthContext);
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -19,18 +22,42 @@ const Register = () => {
       .then((result) => {
         const loggedUser = result.user;
         console.log(loggedUser);
-        Swal.fire({
-          icon: "success",
-          title: "Registered Successfully",
-          text: "Welcome to our platform!",
-          confirmButtonText: "OK",
+        updateUserProfile(data.name, data.photoURL).then(() => {
+          console.log("user profile info updated");
+          reset();
+          Swal.fire({
+            icon: "success",
+            title: "Registered Successfully",
+            text: "Welcome to our platform!",
+            confirmButtonText: "OK",
+          });
+          navigate("/");
         });
-        navigate('/')
       })
       .catch((error) => {
         console.error(error);
       });
   };
+
+
+
+  const handleGoogleSignIn = () => {
+    googleSignIn()
+      .then((result) => {
+        console.log(result)
+        Swal.fire({
+          icon: "success",
+          title: "SignIn in with Google",
+          text: "Welcome back!",
+          confirmButtonText: "OK",
+        });
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Google Sign-In error:", error);
+      });
+  };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -87,12 +114,18 @@ const Register = () => {
           </label>
           <input
             type="password"
-            {...register("password", { required: true, minLength: 6, maxLength: 20 })}
+            {...register("password", {
+              required: true,
+              minLength: 6,
+              maxLength: 20,
+            })}
             placeholder="Password"
             className="input input-bordered"
             required
           />
-          {errors.password && <span>Password must be between 6 and 20 characters</span>}
+          {errors.password && (
+            <span>Password must be between 6 and 20 characters</span>
+          )}
           <label className="label">
             <a href="#" className="label-text-alt link link-hover">
               Forgot password?
@@ -115,7 +148,14 @@ const Register = () => {
 
         <div className="items-center text-center mt-3">
           <h2>Or sign in with</h2>
-          {/* Add your SocialLogin component here */}
+
+          <div className="divider w-full"></div>
+          <div>
+            <button onClick={handleGoogleSignIn} className="btn">
+              <FaGoogle></FaGoogle>
+              GOOGLE
+            </button>
+          </div>
         </div>
       </form>
     </div>
